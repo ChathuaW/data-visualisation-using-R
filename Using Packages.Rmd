@@ -1,0 +1,744 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+Single Continuos Variable: (dataset Chickwts)
+
+* 1. Histogram - hist()
+
+* 2. Density plot - plot()
+
+* 3. Box-Whisker Plot - boxplot()
+
+
+Single Discrete Variable: (dataset chickwts)
+
+* 4. Bar Chart - barplot()
+
+
+Two Continuous Variable : (dataset cars)
+
+* 5. Scatter Plot - plot()
+
+
+Two Variable: One Continuous, One Discrete (Dataset chickwts)
+
+* 6. Box-Whisker Plot - boxplot() - see 3 above as well
+
+* 7. Pie Chart - pie()
+
+* 8. Dot Chart - dotchart()
+
+* 9. Strip Chart - stripchart()
+
+
+Two Variables: Both Discrete (Dataset ggplot2::mpg)
+
+* 10. Mosaic Plot - mosaicplot()
+
+* 11 Stacked Bar Plot - barplot()
+
+Time series: (Dataset LakeHuron)
+
+* 12. Line Charts - plot()
+
+
+Understanding a Single Continuous Numeric Variable
+  
+###1. Histogram
+
+```{r}
+data("chickwts")
+str(chickwts)
+```
+```{r}
+summary(chickwts)
+```
+
+```{r}
+head(chickwts)
+```
+
+```{r}
+hist(chickwts$weight)
+```
+
+```{r}
+hist(chickwts$weight,xlab = "Weight",ylab = "Frequency",
+     main = "Chicken Weight",breaks = 20)
+```
+
+```{r}
+hist(chickwts$weight, breaks = "FD")
+```
+
+```{r}
+bin_width <- 5
+breaks <- seq(min(chickwts$weight), max(chickwts$weight), by = bin_width)
+hist(chickwts$weight, breaks = breaks)
+```
+
+```{r}
+hist(chickwts$weight,
+     xlab = "Weight",
+     ylab = "Frequency",
+     main = "Chicken Weight",
+     breaks = c(100,200,300,400,500))
+```
+```{r}
+hist(chickwts$weight,
+     xlab = "Weight",
+     ylab = "Frequency",
+     main = "Chicken Weight",
+     breaks = c(100,200,300,400,500),
+     labels = T,
+     col = c("red","green","blue","yellow"))
+```
+### 2. Density Plot for single continuous variable
+
+```{r}
+data = chickwts$weight
+den = density(data)
+plot(den)
+```
+
+```{r}
+plot(den, 
+     main = "Density Plot with Filled Area", 
+     xlab = "Chicken Weight", 
+     ylab = "Density", 
+     col = "blue", 
+     lwd = 2)
+```
+Box plot for single continuous variable
+
+```{r}
+boxplot(chickwts$weight)
+```
+
+```{r}
+boxplot(chickwts$weight,horizontal = T)
+```
+
+```{r}
+boxplot(chickwts$weight,
+        notch = T,
+        main = "Box PLot for \n Weight of Chicken",
+        xlab = "Weight of Chicken",
+        ylab = "Weights",
+        col = "lightblue",
+        border = "black",
+        outpch = 16,
+        outcol = "red")
+```
+##plotting single discrete varible
+
+#Bar plot for single discrete varible
+
+```{r}
+bp = table(chickwts$feed)
+barplot(bp)
+```
+```{r}
+bp = barplot(bp,
+        col = rainbow(nlevels(chickwts$feed)),
+        xlab = "Feed of Category",
+        ylab = "Count",
+        main = "Bar PLot for Feed of Chickweights")
+```
+##Plotting two continuous variable
+
+#Scatter Plot
+
+```{r}
+data("cars")
+
+plot(cars$speed,cars$dist)
+```
+```{r}
+plot(jitter(cars$speed),jitter(cars$dist))
+```
+```{r}
+plot(jitter(cars$speed),jitter(cars$dist),xlab = "Speed of Cars",
+     ylab = "Stopping Distance according to speed",
+     main = "Distance to Stop",
+     pch = 4)
+```
+
+```{r}
+plot(jitter(cars$speed),jitter(cars$dist),xlab = "Speed of Cars",
+     ylab = "Stopping Distance according to speed",
+     main = "Distance to Stop",
+     pch = 4)
+abline(a = 60,b = 0,v = 15,h = 20)
+abline(lm(cars$dist ~ cars$speed))
+text(x=10,y=100,label = "Tested on the 1st of January")
+```
+
+##Two variable one continuous and one variable
+
+#Boxplot
+
+```{r}
+boxplot(chickwts$weight ~ chickwts$feed)
+```
+
+#Pie Chart
+
+```{r}
+defects = c(9,15,42,29)
+names(defects) = c("A","B","C","D")
+
+pie(defects)
+```
+```{r}
+lab = c("A","B","C","D")
+pie(defects,labels = lab,col = c("red","yellow","green","blue"))
+```
+#Dot Chart
+
+```{r}
+dotchart(chickwts$weight,labels = chickwts$feed)
+```
+
+```{r}
+dotchart(chickwts$weight,group = chickwts$feed)
+```
+#Strip Chart
+
+```{r}
+stripchart(chickwts$weight ~ chickwts$feed)
+```
+#Stacked bar chart
+
+```{r}
+cy = table(mtcars$vs,mtcars$cyl)
+barplot(cy,legend =rownames(cy))
+```
+
+##Latice packages
+
+##Histogram
+
+
+```{r}
+library(lattice)
+```
+
+```{r}
+histogram(~weight, data = chickwts)
+```
+
+```{r}
+histogram(~weight | factor(feed),data = chickwts)
+```
+
+```{r}
+histogram(~mpg, data = mtcars)
+```
+
+```{r}
+histogram(~mpg | factor(cyl),data = mtcars)
+```
+```{r}
+histogram(~mpg | factor(am),data = mtcars)
+```
+#If the factor is continuous
+
+```{r}
+histogram(~mpg | wt, data = mtcars)
+```
+```{r}
+spli = equal.count(mtcars$wt,3)
+spli
+```
+
+```{r}
+histogram(~mpg | spli, data = mtcars)
+```
+
+```{r}
+histogram(~mpg | spli, data = mtcars, layout = c(1,3))
+```
+#Density plot
+
+```{r}
+chden = density(chickwts$weight)
+chden
+```
+
+```{r}
+plot(chden)
+```
+```{r}
+densityplot(~weight, data = chickwts)
+```
+```{r}
+densityplot(~weight, data = chickwts,plot.points = F)
+```
+```{r}
+densityplot(~weight | feed , data = chickwts)
+```
+```{r}
+data("mtcars")
+```
+
+```{r}
+densityplot(~mpg | factor(cyl), data = mtcars)
+```
+```{r}
+densityplot(~mpg | factor(cyl),data = mtcars, layout = c(1,3))
+```
+
+```{r}
+densityplot(~mpg | factor(cyl), data = mtcars, layout = c(1,3),
+            groups = factor(am))
+```
+```{r}
+densityplot(~mpg | factor(cyl),data = mtcars, layout = c(1,3),
+            groups = factor(am),
+            auto.key = T)
+```
+#Boxplot
+
+```{r}
+boxplot(chickwts$weight)
+```
+```{r}
+boxplot(chickwts$weight ~ chickwts$feed)
+```
+```{r}
+bwplot(weight ~ feed, data = chickwts)
+```
+
+```{r}
+bwplot(~weight | factor(feed), data = chickwts)
+```
+```{r}
+bwplot(~weight | factor(feed), data = chickwts, notch = T)
+```
+```{r}
+bwplot(~weight | factor(feed), data = chickwts, notch = T,
+       layout = c(1,6))
+```
+```{r}
+bwplot(weight ~ feed , data = chickwts,panel = panel.violin)
+```
+#Barchart
+
+
+```{r}
+tb = table(chickwts$feed)
+tb
+```
+```{r}
+barplot(tb)
+```
+```{r}
+barchart(~tb,data = chickwts)
+```
+```{r}
+barchart(rownames(mtcars) ~ mpg, data = mtcars)
+```
+
+```{r}
+barchart(rownames(mtcars) ~ mpg | factor(gear) + factor(am)
+           ,data = mtcars)
+```
+#Scatter Plot
+
+```{r}
+xyplot(mpg ~ wt, data = mtcars)
+```
+```{r}
+xyplot(mpg ~ wt, data = mtcars, grid = T)
+```
+
+```{r}
+xyplot(mpg ~ wt, data = mtcars, type = c("p","r"))
+```
+```{r}
+xyplot(mpg ~ wt, data = mtcars, type = c("p","smooth"))
+```
+
+```{r}
+xyplot(mpg ~ wt | factor(gear), data = mtcars, type = c("p","smooth"),
+       grid = T)
+```
+
+```{r}
+xyplot(mpg ~ wt | factor(gear), data = mtcars,
+       type = c("p","smooth"),
+       grid = T,
+       col.line = "red",lwd = 3)
+```
+
+```{r}
+xyplot(mpg ~ wt | factor(gear), data = mtcars,
+       type = c("p","smooth"),
+       grid = T,
+       groups = factor(am),auto.key = T)
+```
+#Scater Plot Matrix
+
+```{r}
+splom(chickwts)
+```
+```{r}
+splom(mtcars[c(1,2,3,4,6)], type = c("p","smooth"))
+```
+
+```{r}
+cloud(mpg ~ disp*wt, data = mtcars)
+```
+```{r}
+cloud(mpg ~ disp*wt, data = mtcars, groups = factor(cyl),
+      auto.key = T)
+```
+#Dot and strip plot
+
+```{r}
+dotchart(chickwts$weight, groups = chickwts$feed)
+```
+
+```{r}
+dotplot(~weight | feed, data = chickwts)
+```
+
+##Visualization using ggplot2 package
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+ggplot(data = mtcars, aes(x=mpg))+geom_histogram()
+```
+```{r}
+ggplot(data = mtcars,aes(x=mpg))+geom_histogram(binwidth = 6)
+```
+
+```{r}
+ggplot(data = mtcars,aes(x=mpg))+geom_density()
+```
+```{r}
+ggplot(data = mtcars,aes(x=mpg))+geom_density()
+```
+```{r}
+ggplot(data = mtcars,aes(x=mpg))+geom_dotplot()
+```
+
+```{r}
+ggplot(data = mtcars,aes(mpg))+geom_area(stat = "bin")
+```
+```{r}
+ggplot(data = mtcars,aes(mpg))+geom_area(stat = "bin",bins = 6)
+```
+```{r}
+ggplot(data = mtcars,aes(mpg))+geom_freqpoly()
+```
+```{r}
+ggplot(data = mtcars,aes(mpg))+geom_density(color = "blue")
+```
+```{r}
+ggplot(data = mtcars,aes(mpg))+geom_density(color = "blue",
+                                             fill = "red",
+                                             alpha = 0.5)
+```
+
+```{r}
+ggplot(data = mtcars,aes(mpg))+geom_density(color = "blue",
+                                            fill = "red",
+                                            alpha = 0.5,
+                                            size = 3,
+                                            linetype = "dotted")
+```
+```{r}
+data("diamonds")
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price,
+                           shape = cut,colour = clarity))+
+  geom_point()
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price,
+                           shape = cut,colour = clarity))+
+  geom_point()+geom_smooth()
+```
+
+```{r}
+d2 = diamonds[diamonds$carat <= 0.31 & diamonds$carat >= 0.29,]
+d2
+```
+
+```{r}
+ggplot(data = d2,aes(x=cut,y=price,colour = clarity))+
+  geom_boxplot()
+```
+```{r}
+ggplot(data = d2,aes(x=cut,y=price,fill = clarity))+
+  geom_boxplot()
+```
+
+```{r}
+ggplot(data = d2,aes(x=clarity))+geom_bar()
+```
+
+```{r}
+ggplot(data = d2,aes(x=clarity,fill = cut))+geom_bar()
+```
+```{r}
+ggplot(data = d2,aes(x=clarity,fill = cut))+
+  geom_bar(position = "fill")
+```
+
+```{r}
+ggplot(data = d2,aes(x=clarity,fill = cut))+
+  geom_bar(position = "dodge")
+```
+
+```{r}
+ggplot(data = d2,aes(x=clarity,fill = cut))+
+  geom_bar(position = "stack")
+```
+#Line plot
+
+```{r}
+data("LakeHuron")
+head(LakeHuron)
+```
+```{r}
+lh = data.frame(year = 1875:1972,level = as.vector(LakeHuron))
+head(lh)
+```
+
+```{r}
+ggplot(data = lh,aes(x=year,y=level))+geom_line()
+```
+##Scatter plot
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  facet_grid(.~cut)
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  facet_grid(cut~.)
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  facet_grid(cut~clarity)
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  facet_wrap(~cut)
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  facet_wrap(~clarity)
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  geom_smooth(se = F)
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  geom_smooth(se = F,method = "lm")
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  stat_smooth(method = "lm",se = F)
+```
+#zoom
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  facet_grid(cut~color)+geom_smooth()
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  geom_smooth() + xlim(c(3,5))
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  geom_smooth() + xlim(c(3,5))
+```
+
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  geom_smooth() + coord_cartesian(xlim = c(3,5))
+```
+```{r}
+ggplot(data = diamonds,aes(x=carat,y=price))+geom_point()+
+  geom_smooth() + coord_cartesian(xlim = c(3,5),ylim = c(5000,20000))
+
+```
+
+```{r}
+ggplot(data = mtcars,aes(x=mpg,y=wt))+geom_point()
+```
+
+```{r}
+ggplot(data = mtcars,aes(x=mpg,y=wt))+geom_point()+
+  coord_fixed(ratio = 1)
+```
+
+```{r}
+ggplot(data = mtcars,aes(x=mpg,y=wt))+geom_point()+
+  coord_fixed(ratio = 4)
+```
+
+```{r}
+ggplot(data = mtcars,aes(x=mpg,y=wt))+geom_point()+
+  coord_flip()
+```
+#Pie chart
+
+```{r}
+cyl_summary <- as.data.frame(table(mtcars$cyl))
+colnames(cyl_summary) <- c("Cylinders", "Count")
+```
+
+```{r}
+ggplot(cyl_summary, aes(x = "", y = Count, fill = factor(Cylinders))) +
+  geom_bar(stat = "identity", width = 1) + 
+  coord_polar("y", start = 0) + 
+  labs(title = "Distribution of Cylinders in mtcars",
+       fill = "Cylinders") +
+  theme_void()
+```
+#Transform Scale
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+
+  scale_x_log10()+
+  scale_y_log10()
+```
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+
+  coord_trans(x = "log10",y="log10")
+```
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+
+  coord_trans(x="sqrt",y="sqrt")
+```
+#Theme
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()
+```
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+theme_light()
+```
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+theme_dark()
+```
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+theme_gray()
+
+```
+```{r}
+library(ggthemes)
+```
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+theme_calc()
+```
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+theme_economist()
+```
+
+```{r}
+ggplot(diamonds,aes(carat,price))+geom_point()+
+  theme_economist()+labs(title = "Diamonds ~ Price by carat",
+                         y = "Price $",x="Carat")
+```
+
+#qplot automatically picks the right geom
+
+```{r}
+qplot(x=mpg,data = mtcars)
+```
+
+```{r}
+qplot(mpg,disp,data = mtcars)
+```
+
+```{r}
+qplot(x=mpg,data = mtcars,geom = "density")
+```
+
+```{r}
+qplot(x=mpg,data = mtcars,geom = "histogram")
+```
+
+```{r}
+qplot(x=factor(gear),y=mpg,data = mtcars,geom = "boxplot")
+```
+```{r}
+qplot(x=factor(gear),y=mpg,data = mtcars,geom = c("point","boxplot"))
+```
+
+```{r}
+qplot(x=factor(gear),y=mpg,data = mtcars,geom = c("boxplot","point"))
+```
+
+```{r}
+qplot(x=factor(gear),y=mpg,data = mtcars,geom = c("boxplot","jitter"))
+```
+
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am))
+```
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am),size = wt)
+```
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am),facets = gear ~ vs)
+
+```
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am),
+      main = "MPG by Number of Cylinders",
+      xlab = "Number of Cylinders",
+      ylab = "Miles per Gallon",
+      ylim = c(0,40))
+```
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am),
+      main = "MPG by Number of Cylinders",
+      xlab = "Number of Cylinders",
+      ylab = "Miles per Gallon",
+      ylim = c(0,40))+theme_bw()
+```
+
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am),
+      main = "MPG by Number of Cylinders",
+      xlab = "Number of Cylinders",
+      ylab = "Miles per Gallon",
+      ylim = c(0,40))+theme_classic()
+
+```
+```{r}
+qplot(cyl,mpg,data = mtcars,color = factor(am),
+      main = "MPG by Number of Cylinders",
+      xlab = "Number of Cylinders",
+      ylab = "Miles per Gallon",
+      ylim = c(0,40))+theme_gray()
+```
+
